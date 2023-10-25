@@ -51,9 +51,9 @@ pad dir n x ys
 -- True
 --
 isSubSequence :: (Eq a) => [a] -> [a] -> Bool
-isSubSequence []         _      = error "fill this in"
-isSubSequence _          []     = error "fill this in"
-isSubSequence xxs@(x:xs) (y:ys) = error "fill this in"
+isSubSequence []         _      = True
+isSubSequence _          []     = False
+isSubSequence xxs@(x:xs) (y:ys) = isSubSequence xxs ys || x == y && isSubSequence xs ys
 
 -------------------------------------------------------------------------------
 -- | maximum 
@@ -82,8 +82,8 @@ maximum d xs = foldr f base xs
 intersp :: a -> [a] -> [a]
 intersp s xs = foldr f base xs
   where 
-    base     = s : []
-    f x r    = error "fill this in"
+    base     = [s]
+    f x r    = s : x : r
 
 -------------------------------------------------------------------------------
 -- Higher Order: iter
@@ -92,5 +92,5 @@ intersp s xs = foldr f base xs
 -- 1024
 
 iter :: Int -> (a -> a) -> a -> a
-iter 0 _ x = error "fill this in"
-iter n f x = error "fill this in"
+iter 0 _ x = x
+iter n f x = iter (n-1) f (f x)
