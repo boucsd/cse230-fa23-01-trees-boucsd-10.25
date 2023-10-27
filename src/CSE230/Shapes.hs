@@ -112,8 +112,17 @@ mkCarpet   = save "img/carpet.png" sierpinskiCarpet
 sierpinskiCarpet :: Image
 sierpinskiCarpet = iter 4 f base
   where
-    f            = error "fill this in"
+    f  x         = aboves [carpetEdge x, carpetMiddle x, carpetEdge x] 
+     where
+      carpetEdge m = besides [m, whiteRow m, m, whiteRow m, m]
+        where
+          whiteRow y  = rectangle (1 * width y / 8) (width y) solid white
+      carpetMiddle n = besides [n, whiteSquare n, n]
+        where
+          whiteSquare y = square (5 * width y / 4) solid white
     base         = blueSquare
+
+
 
 blueSquare :: Image
 blueSquare =  square 4 solid fgCol

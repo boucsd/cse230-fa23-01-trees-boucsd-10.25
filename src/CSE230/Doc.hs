@@ -29,7 +29,8 @@ module CSE230.Doc
 
 import qualified Test.QuickCheck as QC
 import           Prelude hiding (maximum)
-import           CSE230.List
+import CSE230.List ( maximum, pad, Dir (DirL, DirR) )
+import Text.ParserCombinators.ReadP (char)
 
 -------------------------------------------------------------------------------
 -- | A 'Doc' is a 'String' list
@@ -103,11 +104,11 @@ height (D ls) = length ls
 -- cat
 -- horse
 -- mongoose
--- <BLANKLINE>
 --
 
 vcatL :: Doc -> Doc -> Doc
-vcatL d1 d2 = error "fill this in"
+vcatL d1 d2 = D(docLines d1 ++ docLines d2)-- doc(show d1 ++ show d2)  -- error "fill this in"
+
 
 -------------------------------------------------------------------------------
 -- | Vertical Concatenation aligned at Right
@@ -117,12 +118,22 @@ vcatL d1 d2 = error "fill this in"
 --      cat
 --    horse
 -- mongoose
--- <BLANKLINE>
+--      
+--    
 --
 
 vcatR :: Doc -> Doc -> Doc
-vcatR d1 d2 = error "fill this in"
+vcatR d1 d2 = padDocL d1 d2 -- doc(padl (show d1) ++ padl(show d2)) --error "fill this in"
 
+padDocL :: Doc -> Doc -> Doc
+padDocL d1 d2= D(map (\x -> replicate (max (width d1) (width d2) - width d1) ' ' ++ x) (docLines d1) ++ map (\x -> replicate (max (width d1) (width d2) - width d2) ' ' ++ x) (docLines d2))
+
+--padDocL d3 = D(map (\x -> replicate (width d3 - length x) ' ' ++ x) (docLines d3))
+
+-- >>>D(map (\x -> replicate (max (width aDoc) (width bDoc) - width bDoc) ' ' ++ x) (docLines aDoc))
+--   a
+--   aaa
+--   aaaaa
 -------------------------------------------------------------------------------
 -- | Horizontal Concatenation aligned at Top
 --   HINT: use `zip` or `zipWith`
@@ -141,7 +152,13 @@ vcatR d1 d2 = error "fill this in"
 -- <BLANKLINE>
 --
 hcatT :: Doc -> Doc -> Doc
-hcatT d1 d2 = error "fill this in"
+hcatT d1 d2 = conbineLines d1 (elongate DirR (height d1) d2)-- error "fill this in"
+
+conbineLines :: Doc -> Doc -> Doc
+conbineLines d1 d2 = D (zipWith (++) (docLines (padDocR d1)) (docLines d2))
+
+padDocR :: Doc -> Doc
+padDocR d3= D(map (pad DirR (width d3) ' ') (docLines d3))
 
 elongate :: Dir -> Int -> Doc -> Doc
 elongate dir h (D ls) = D (pad dir h "" ls) 
@@ -163,7 +180,7 @@ elongate dir h (D ls) = D (pad dir h "" ls)
 -- <BLANKLINE>
 --
 hcatB :: Doc -> Doc -> Doc
-hcatB d1 d2 = error "fill this in"
+hcatB d1 d2 = conbineLines d1 (elongate DirL (height d1) d2) --error "fill this in"
 
 triangle :: Doc
 triangle = D 
@@ -194,7 +211,6 @@ triangle = D
 -- *    *    *
 -- ***  ***  ***
 -- ***************
--- <BLANKLINE>
 --
 triangles :: [Doc]
 triangles = [ triangle
